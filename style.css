@@ -652,11 +652,80 @@ p {
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid var(--line);
+  cursor: pointer;
   transition: background 180ms ease;
 }
 
 .certificate-row:hover {
   background: rgba(174, 220, 225, 0.025);
+}
+
+.certificate-row:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: -2px;
+}
+
+.certificate-modal[hidden] {
+  display: none;
+}
+
+.certificate-modal {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 60px 16px 24px;
+  background: rgba(3, 10, 20, 0.86);
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.certificate-modal.is-open {
+  opacity: 1;
+}
+
+.certificate-modal-content {
+  max-width: 94vw;
+  max-height: 90svh;
+  transform: scale(0.97);
+  transition: transform 180ms ease;
+}
+
+.certificate-modal.is-open .certificate-modal-content {
+  transform: scale(1);
+}
+
+.certificate-modal-content img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 94vw;
+  max-height: 90svh;
+  object-fit: contain;
+}
+
+.certificate-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: rgba(16, 36, 61, 0.9);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.certificate-modal-close:hover {
+  border-color: rgba(138, 198, 245, 0.58);
+  color: var(--cyan);
 }
 
 .certificate-mark {

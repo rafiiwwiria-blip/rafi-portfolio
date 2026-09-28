@@ -2,10 +2,52 @@ const menuToggle = document.querySelector('.menu-toggle');
 const siteNav = document.querySelector('.site-nav');
 const navLinks = document.querySelectorAll('.nav-link, .nav-contact');
 const yearLabel = document.querySelector('#current-year');
+const certificateRows = document.querySelectorAll('.certificate-row');
+const certificateModal = document.querySelector('#certificate-modal');
+const certificateModalClose = document.querySelector('.certificate-modal-close');
+let certificateTrigger = null;
+let modalCloseTimer = null;
 
 if (yearLabel) {
   yearLabel.textContent = new Date().getFullYear();
 }
+
+function closeCertificateModal() {
+  if (!certificateModal || certificateModal.hidden) return;
+  certificateModal.classList.remove('is-open');
+  certificateModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  window.clearTimeout(modalCloseTimer);
+  modalCloseTimer = window.setTimeout(() => {
+    certificateModal.hidden = true;
+    certificateTrigger?.focus();
+  }, 180);
+}
+
+function openCertificateModal(trigger) {
+  if (!certificateModal) return;
+  window.clearTimeout(modalCloseTimer);
+  certificateTrigger = trigger;
+  certificateModal.hidden = false;
+  certificateModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => certificateModal.classList.add('is-open'));
+  certificateModalClose?.focus();
+}
+
+certificateRows.forEach((row) => {
+  row.addEventListener('click', () => openCertificateModal(row));
+  row.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    openCertificateModal(row);
+  });
+});
+
+certificateModalClose?.addEventListener('click', closeCertificateModal);
+certificateModal?.addEventListener('click', (event) => {
+  if (event.target === certificateModal) closeCertificateModal();
+});
 
 function closeMenu() {
   if (!menuToggle || !siteNav) return;
@@ -33,6 +75,27 @@ if (menuToggle && siteNav) {
     if (event.key === 'Escape') closeMenu();
   });
 }
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeCertificateModal();
+});
+
+document.addEventListener('click', (event) => {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+  const link = event.target.closest('a[href^="#"]');
+  if (!link) return;
+
+  const targetId = decodeURIComponent(link.hash.slice(1));
+  const target = document.getElementById(targetId);
+  if (!target) return;
+
+  event.preventDefault();
+  if (window.location.hash !== link.hash) {
+    window.history.pushState(null, '', link.hash);
+  }
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 
 if ('IntersectionObserver' in window) {
   const revealItems = document.querySelectorAll(
